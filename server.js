@@ -5,11 +5,13 @@ require('dotenv').config();
 const PORT = process.env.PORT || 8080;
 const ENV = process.env.ENV || "development";
 const express = require("express");
-const bodyParser = require("body-parser");
-const sass = require("node-sass-middleware");
 const app = express();
+const bodyParser = require("body-parser");
 const morgan = require('morgan');
-const Sequelize = require('sequelize')
+const cors = require('cors');
+const Sequelize = require('sequelize');
+
+app.use(cors());
 
 // PG database client/connection setup
 const db = require("./lib/db");
@@ -33,14 +35,7 @@ db.sync({ alter: true })
 //         The :status token will be colored red for server error codes, yellow for client error codes, cyan for redirection codes, and uncolored for all other codes.
 app.use(morgan('dev'));
 
-app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use("/styles", sass({
-  src: __dirname + "/styles",
-  dest: __dirname + "/public/styles",
-  debug: true,
-  outputStyle: 'expanded'
-}));
 app.use(express.static("public"));
 
 // Separated Routes for each Resource

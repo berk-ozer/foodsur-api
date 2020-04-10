@@ -1,10 +1,12 @@
-const Sequelize = require("sequelize");
-const db = require("../../lib/db");
+const { Sequelize, DataTypes } = require("sequelize");
 
-const Favourite = db.define("favourite", {
-  name: {
-    type: Sequelize.STRING,
-  }
-});
+module.exports = (db) => {
+  const Favourite = db.define("favourite", {
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false
+    }
+  });
+  return Favourite;
+}
 
-module.exports = Favourite;

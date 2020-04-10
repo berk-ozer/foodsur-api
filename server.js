@@ -9,6 +9,7 @@ const bodyParser = require("body-parser");
 const sass = require("node-sass-middleware");
 const app = express();
 const morgan = require('morgan');
+const Sequelize = require('sequelize')
 
 // PG database client/connection setup
 const db = require("./lib/db");
@@ -16,6 +17,16 @@ const db = require("./lib/db");
 db.authenticate()
   .then(() => console.log("Database Connected..."))
   .catch((err) => console.log("Error: ", err));
+
+// Sequelize Models
+const User = require('./db/models/User')(db)
+const Dietary_restriction = require('./db/models/Dietary_restriction')(db)
+const User_dietary_restriction = require('./db/models/User_dietary_restriction')(db)
+const Favourite = require('./db/models/Favourite')(db)
+const User_favourite = require('./db/models/User_favourite')(db)
+
+db.sync({ alter: true })
+  .then(res => console.log('db populated'))
 
 // Load the logger first so all (static) HTTP requests are logged to STDOUT
 // 'dev' = Concise output colored by response status for development use.
@@ -48,7 +59,9 @@ app.use("/api/widgets", widgetsRoutes(db));
 // Warning: avoid creating more routes in this file!
 // Separate them into separate routes files (see above).
 app.get("/", (req, res) => {
+  // User.create({ username: 'bort', email: 'sampson@test.com', password: '12345' })
   res.render("index");
+
 });
 
 app.listen(PORT, () => {

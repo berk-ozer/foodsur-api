@@ -1,0 +1,9 @@
+{
+  "ingredients": [
+    {
+      "quantity": 1,
+      "measureURI": "http://www.edamam.com/ontologies/edamam.owl#Measure_unit",
+      "foodId": "food_bnbh4ycaqj9as0a9z7h9xb2wmgat"
+    }
+  ]
+}

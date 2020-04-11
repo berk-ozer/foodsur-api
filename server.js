@@ -10,6 +10,7 @@ const bodyParser = require("body-parser");
 const morgan = require('morgan');
 const cors = require('cors');
 const Sequelize = require('sequelize');
+const axios = require('axios')
 
 app.use(cors());
 
@@ -36,7 +37,7 @@ db.sync({ alter: true })
 app.use(morgan('dev'));
 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static("public"));
+// app.use(express.static("public"));
 
 // Separated Routes for each Resource
 // Note: Feel free to replace the example routes below with your own
@@ -52,11 +53,22 @@ app.use("/api/users", usersRoutes(db));
 // Warning: avoid creating more routes in this file!
 // Separate them into separate routes files (see above).
 app.get("/", (req, res) => {
-  // User.create({ username: 'bort', email: 'sampson@test.com', password: '12345' })
-  res.render("index");
-
+  axios.get('https://api.edamam.com/api/food-database/parser?nutrition-type=logging&ingr=cheese&app_id=7e7111eb&app_key=e019f6e0efdddb975bcbea5eeeb91c8c')
+    .then(res => console.log(res.data.hints))
+    .then(res => axios.post('https://api.edamam.com/api/food-database/nutrients?app_id=edc61ca8&app_key=b9f17ae7284f840d6dd1ef3cbcdcde9e', {
+      "ingredients": [
+        {
+          "quantity": 1,
+          "measureURI": "http://www.edamam.com/ontologies/edamam.owl#Measure_unit",
+          "foodId": "food_bnbh4ycaqj9as0a9z7h9xb2wmgat"
+        }
+      ]
+    }))
+    .then(res => console.log(res))
+    .catch(err => console.log(err))
 });
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
 });
+

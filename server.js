@@ -53,9 +53,9 @@ app.use("/api/users", usersRoutes(db));
 // Warning: avoid creating more routes in this file!
 // Separate them into separate routes files (see above).
 app.get("/", (req, res) => {
-  axios.get('https://api.edamam.com/api/food-database/parser?nutrition-type=logging&ingr=cheese&app_id=7e7111eb&app_key=e019f6e0efdddb975bcbea5eeeb91c8c')
+  axios.get('https://api.edamam.com/api/food-database/parser?nutrition-type=logging&ingr=cheese&app_id=${app_id}&app_key=${app-key}')
     .then(res => console.log(res.data.hints))
-    .then(res => axios.post('https://api.edamam.com/api/food-database/nutrients?app_id=edc61ca8&app_key=b9f17ae7284f840d6dd1ef3cbcdcde9e', {
+    .then(res => axios.post('https://api.edamam.com/api/food-database/nutrients?app_id=${app_id}&app_key=app_key=${app-key}', {
       "ingredients": [
         {
           "quantity": 1,

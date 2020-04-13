@@ -15,8 +15,8 @@ const User = require('../db/models/User')
 
 module.exports = (db) => {
   router.post("/new", (req, res) => {
-    const { username, email, password } = req.body
-    User.create({ username, email, password })
-  });
+    const { username, email, password } = req.body;
+    User(db).create({username, email, password});
+  })
   return router;
 };

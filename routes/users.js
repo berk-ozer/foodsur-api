@@ -7,12 +7,16 @@
 
 const express = require('express');
 const router = express.Router();
-const Sequelize = require('sequelize')
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
+const User = require('../db/models/User')
+
+
 
 module.exports = (db) => {
   router.post("/new", (req, res) => {
-    console.log('hit server')
-    // User.create({ username, email, password })
+    const { username, email, password } = req.body
+    User.create({ username, email, password })
   });
   return router;
 };

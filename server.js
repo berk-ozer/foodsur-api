@@ -46,7 +46,6 @@ const usersRoutes = require("./routes/users");
 // Mount all resource routes
 // Note: Feel free to replace the example routes below with your own
 app.use("/api/users", usersRoutes(db));
-// Note: mount other resources here, using the same pattern above
 
 
 // Home page

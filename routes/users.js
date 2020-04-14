@@ -22,9 +22,10 @@ module.exports = (db) => {
       await User(db).create({username, email, password})
         .catch(err => console.log(err))
       console.log('USER ADDED')
+      res.send('Success')
     } else {
       console.log('USER EXISTS')
-      res.status(400)
+      res.send('error: user exists')
     }
 
 

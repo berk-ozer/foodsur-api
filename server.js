@@ -29,7 +29,23 @@ const Favourite = require('./db/models/Favourite')(db)
 const User_favourite = require('./db/models/User_favourite')(db)
 
 db.sync({ alter: true })
-  .then(res => console.log('db populated'))
+.then(res => console.log('db populated'))
+
+Dietary_restriction.sync({ force: true })
+  .then(() => {
+    Dietary_restriction.bulkCreate([
+      {name: 'Vegan'},
+      {name: 'Vegetarian'},
+      {name: 'Sugar-conscious'},
+      {name: 'Peanut-free'},
+      {name: 'Tree-nut-free'},
+      {name: 'Alcohol-free'},
+      {name: 'Balanced diet'},
+      {name: 'High-protein diet'},
+      {name: 'Low-fat diet'},
+      {name: 'Low-carb diet'}
+    ])
+  });
 
 // Load the logger first so all (static) HTTP requests are logged to STDOUT
 // 'dev' = Concise output colored by response status for development use.

@@ -30,13 +30,15 @@ module.exports = (db) => {
   })
 
   router.post("/login", async (req, res) => {
-   const {email} = req.body
-   const checkUser = await User(db).findAll({where: {email}})
-   if(checkUser.length === 1) {
-     res.send('Success')
-   } else {
-     res.send('Error')
-   }
+    const {email} = req.body
+    const user = await User(db).findAll({where: {email}})
+
+    //  If user exists in db, send back their id in response
+    if (user.length === 1) {
+      res.send({ success: true, userId: user[0].dataValues.id});
+    } else {
+      res.send('Error')
+    }
   })
 
   return router;

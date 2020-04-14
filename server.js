@@ -28,8 +28,20 @@ const User_dietary_restriction = require('./db/models/User_dietary_restriction')
 const Favourite = require('./db/models/Favourite')(db)
 const User_favourite = require('./db/models/User_favourite')(db)
 
+// Seeds
+const dietaryRestrictionSeed = require('./db/seeds/seedDietaryRestriction');
+
+// Sync database
 db.sync({ alter: true })
-  .then(res => console.log('db populated'))
+.then(res => {console.log('db populated')})
+// Run seed if table is not already seeded
+.then(() => Dietary_restriction.count())
+.then(count => {
+  if (count !== 10) {
+    dietaryRestrictionSeed(db);
+  }
+});
+
 
 // Load the logger first so all (static) HTTP requests are logged to STDOUT
 // 'dev' = Concise output colored by response status for development use.
@@ -43,10 +55,12 @@ app.use(bodyParser.json())
 // Separated Routes for each Resource
 // Note: Feel free to replace the example routes below with your own
 const usersRoutes = require("./routes/users");
+const dietaryRestrictionsRoutes = require("./routes/dietaryRestrictions");
 
 // Mount all resource routes
 // Note: Feel free to replace the example routes below with your own
 app.use("/api/users", usersRoutes(db));
+app.use("/api/restrictions", dietaryRestrictionsRoutes(db));
 
 
 // Home page

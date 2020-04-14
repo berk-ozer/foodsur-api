@@ -29,18 +29,15 @@ module.exports = (db) => {
     }
   })
 
-  router.post('/login', async (req, res) => {
+  router.post("/login", async (req, res) => {
    const {email} = req.body
    const checkUser = await User(db).findAll({where: {email}})
    if(checkUser.length === 1) {
-    //set cookies and send response
+     res.send('Success')
    } else {
-     console.log('Error')
+     res.send('Error')
    }
-
   })
-
-
 
   return router;
 };

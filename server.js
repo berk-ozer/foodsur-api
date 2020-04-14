@@ -33,14 +33,14 @@ const dietaryRestrictionSeed = require('./db/seeds/seedDietaryRestriction');
 
 // Sync database
 db.sync({ alter: true })
-.then(res => {console.log('db populated')})
-// Run seed if table is not already seeded
-.then(() => Dietary_restriction.count())
-.then(count => {
-  if (count !== 10) {
-    dietaryRestrictionSeed(db);
-  }
-});
+  .then(res => { console.log('db populated') })
+  // Run seed if table is not already seeded
+  .then(() => Dietary_restriction.count())
+  .then(count => {
+    if (count !== 10) {
+      dietaryRestrictionSeed(db);
+    }
+  });
 
 
 // Load the logger first so all (static) HTTP requests are logged to STDOUT
@@ -56,11 +56,12 @@ app.use(bodyParser.json())
 // Note: Feel free to replace the example routes below with your own
 const usersRoutes = require("./routes/users");
 const dietaryRestrictionsRoutes = require("./routes/dietaryRestrictions");
+const userDataRoutes = require("./routes/userData");
 
 // Mount all resource routes
-// Note: Feel free to replace the example routes below with your own
 app.use("/api/users", usersRoutes(db));
 app.use("/api/restrictions", dietaryRestrictionsRoutes(db));
+app.use("/api/user-data", userDataRoutes(db));
 
 
 // Home page

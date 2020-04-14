@@ -27,13 +27,20 @@ module.exports = (db) => {
       console.log('USER EXISTS')
       res.send('error: user exists')
     }
-
-
-    // const user = await User(db).findAll({where: {
-    //   email: 'bort'
-    // }})
-    // console.log(user.dataValues)
   })
+
+  router.post('/login', async (req, res) => {
+   const {email} = req.body
+   const checkUser = await User(db).findAll({where: {email}})
+   if(checkUser.length === 1) {
+    //set cookies and send response
+   } else {
+     console.log('Error')
+   }
+
+  })
+
+
 
   return router;
 };

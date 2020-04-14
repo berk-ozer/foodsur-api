@@ -59,10 +59,12 @@ app.use(bodyParser.json())
 // Separated Routes for each Resource
 // Note: Feel free to replace the example routes below with your own
 const usersRoutes = require("./routes/users");
+const dietaryRestrictionsRoutes = require("./routes/dietaryRestrictions");
 
 // Mount all resource routes
 // Note: Feel free to replace the example routes below with your own
 app.use("/api/users", usersRoutes(db));
+app.use("/api/restrictions", dietaryRestrictionsRoutes(db));
 
 
 // Home page

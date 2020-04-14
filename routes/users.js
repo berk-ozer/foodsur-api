@@ -11,12 +11,29 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const User = require('../db/models/User')
 
-
-
 module.exports = (db) => {
-  router.post("/new", (req, res) => {
-    const { username, email, password } = req.body
-    User.create({ username, email, password })
-  });
+
+  router.post("/new", async (req, res) => {
+    const {username, email, password} = req.body
+    const checkUser = await User(db).findAll({where: {
+      email
+    }})
+    if (checkUser.length === 0) {
+      await User(db).create({username, email, password})
+        .catch(err => console.log(err))
+      console.log('USER ADDED')
+      res.send('Success')
+    } else {
+      console.log('USER EXISTS')
+      res.send('error: user exists')
+    }
+
+
+    // const user = await User(db).findAll({where: {
+    //   email: 'bort'
+    // }})
+    // console.log(user.dataValues)
+  })
+
   return router;
 };

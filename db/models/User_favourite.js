@@ -7,8 +7,8 @@ module.exports = (db) => {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    favourite_id: {
-      type: DataTypes.INTEGER,
+    api_id: {
+      type: DataTypes.STRING,
       allowNull: false
     }
   });

@@ -47,18 +47,18 @@ module.exports = (db) => {
   })
 
   router.post('/user-preferences', async (req, res) => {
-    let { selectedPreferences } = req.body
+    let { userId, selectedPreferences } = req.body
 
-    const checkUserPrefrences = await User_dietary_restrictions(db).findAll({ attribute: ['restriction_id'], raw: true, where: { user_id: 1 } })
+    const checkUserPreferences = await User_dietary_restrictions(db).findAll({ attribute: ['restriction_id'], raw: true, where: { user_id: userId } })
     const userPreferences = []
-    checkUserPrefrences.forEach(preference => userPreferences.push(preference.restriction_id))
+    checkUserPreferences.forEach(preference => userPreferences.push(preference.restriction_id))
 
     selectedPreferences = selectedPreferences.filter(preference => !userPreferences.includes(preference))
 
     const userData = []
     selectedPreferences.forEach(preference => {
       userData.push({
-        user_id: userId.id,
+        user_id: userId,
         restriction_id: preference
       })
     });

@@ -18,11 +18,13 @@ module.exports = (db) => {
     const checkUser = await User(db).findAll({where: {
       email
     }})
+
+    // If user does not already exist in db, create new user and send their id in response
     if (checkUser.length === 0) {
-      await User(db).create({username, email, password})
-        .catch(err => console.log(err))
+      const user = await User(db).create({username, email, password})
+        .catch(err => console.log(err));
       console.log('USER ADDED')
-      res.send('Success')
+      res.send({ success: true, userId: user.dataValues.id})
     } else {
       console.log('USER EXISTS')
       res.send('error: user exists')
@@ -30,13 +32,15 @@ module.exports = (db) => {
   })
 
   router.post("/login", async (req, res) => {
-   const {email} = req.body
-   const checkUser = await User(db).findAll({where: {email}})
-   if(checkUser.length === 1) {
-     res.send('Success')
-   } else {
-     res.send('Error')
-   }
+    const {email} = req.body
+    const user = await User(db).findAll({where: {email}})
+
+    // If user exists in db, send back their id in response
+    if (user.length === 1) {
+      res.send({ success: true, userId: user[0].dataValues.id});
+    } else {
+      res.send('Error')
+    }
   })
 
   return router;

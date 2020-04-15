@@ -11,9 +11,13 @@ const userId = {
 module.exports = (db) => {
 
   router.post('/user-preferences', async (req, res) => {
-    const { selectedPreferences } = req.body
+    let { selectedPreferences } = req.body
 
     const checkUserPrefrences = await User_dietary_restrictions(db).findAll({ attribute: ['restriction_id'], raw: true, where: { user_id: 1 } })
+    const userPreferences = []
+    checkUserPrefrences.forEach(preference => userPreferences.push(preference.restriction_id))
+
+    selectedPreferences = selectedPreferences.filter(preference => !userPreferences.includes(preference))
 
     const userData = []
     selectedPreferences.forEach(preference => {

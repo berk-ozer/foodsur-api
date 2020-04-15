@@ -2,10 +2,9 @@ const { Sequelize, DataTypes } = require("sequelize");
 
 module.exports = (db) => {
   const Favourite = db.define("favourite", {
-    id: {
+    api_id: {
       type: DataTypes.STRING,
-      allowNull: false,
-      primaryKey: true
+      allowNull: false
     },
     name: {
       type: DataTypes.STRING,

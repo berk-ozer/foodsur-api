@@ -13,13 +13,13 @@ const userId = {
 module.exports = (db) => {
 
   router.post('/add-favourites', async (req, res) => {
-    let {productName, api_id} = req.body
+    let { productName, api_id } = req.body
     const checkFavourites = await Favourite(db).findAll({
       raw: true,
-      where: { name: productName}
+      where: { name: productName }
     })
 
-    if(checkFavourites.length === 0){
+    if (checkFavourites.length === 0) {
       await Favourite(db).create({
         api_id: api_id,
         name: productName
@@ -33,17 +33,12 @@ module.exports = (db) => {
         api_id: api_id
       }
     })
-    if(checkUserFavourites.length === 0) {
+    if (checkUserFavourites.length === 0) {
       await User_favourite(db).create({
         user_id: userId.id,
         api_id: api_id
       })
     }
-    const test = await User_favourite(db).findAll({
-      raw: true
-    })
-    console.log('FAVOURITES_user', test)
-
   })
 
   router.post('/user-preferences', async (req, res) => {

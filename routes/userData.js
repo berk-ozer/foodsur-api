@@ -41,6 +41,16 @@ module.exports = (db) => {
     }
   })
 
+  router.get('/user-favourites', async (req, res) => {
+    const userFavourites = User_favourite(db).findAll({
+      raw: true, where: {
+        user_id: userId.id
+      }
+    })
+    console.log(userFavourites)
+
+  });
+
   router.post('/user-preferences', async (req, res) => {
     let { userId, selectedPreferences } = req.body
 

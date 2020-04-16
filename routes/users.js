@@ -31,20 +31,17 @@ module.exports = () => {
 
   router.post("/login", async (req, res) => {
     const {email} = req.body
-    const user = await db.User.findAll({ raw: true, where: {email} })
-    console.log(user);
+    const userInfo = await db.User.findAll({
+      raw: true,
+      where: {email},
+      include: [db.DietaryRestriction]
+     });
 
+     console.log(userInfo);
 
-    // If user exists in db, send back their id in response
-    if (user.length === 1) {
-      const userRestrictions = await db.User.findAll({
-        raw: true,
-        where: {id: user[0].id},
-        include: [db.DietaryRestriction]
-      })
-      console.log(userRestrictions);
-      console.log(userRestrictions[0]['DietaryRestrictions.name']);
-      res.send({ success: true, userId: user[0].id});
+    // If user exists in db, send back their id and dietary restrictions in response
+    if (userInfo.length) {
+      // res.send({ success: true, userId: user[0].id});
     } else {
       res.send('Error')
     }

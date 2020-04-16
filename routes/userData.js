@@ -42,11 +42,20 @@ module.exports = () => {
   })
 
   router.get('/user-favourites', async (req, res) => {
-    const userFavourites = await db.User.findAll({
-      raw: true, include: [{ model: db.Favourite }]
+    let userFavourites = await db.User.findAll({
+      raw: true, include: [{ model: db.Favourite }], where: { id: userId.id }
     })
 
-    console.log(userFavourites)
+    const userData = []
+    userFavourites.forEach(product => {
+      userData.push({
+        productName: product['Favourites.name'],
+        apiId: product['Favourites.apiId']
+      })
+    })
+
+    res.send(userData)
+
 
   });
 

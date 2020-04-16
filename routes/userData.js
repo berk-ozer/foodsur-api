@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../models/index');
+const getRestrictionObj = require('../helpers/getRestrictionObj');
 
 // Replace with actual id from cookie
 const userId = {
@@ -50,9 +51,11 @@ module.exports = () => {
 
   });
 
+  // Setting user dietary preferences
   router.post('/user-preferences', async (req, res) => {
     let { userId, selectedPreferences } = req.body
 
+    // Create restrictions for the user, if they don't already have it
     const checkUserPreferences = await db.UserDietaryRestriction.findAll({ raw: true, where: { userId: userId } })
     const userPreferences = []
     checkUserPreferences.forEach(preference => userPreferences.push(preference.dietaryRestrictionId))
@@ -66,10 +69,21 @@ module.exports = () => {
         dietaryRestrictionId: preference
       })
     });
+
     await db.UserDietaryRestriction.bulkCreate(userData)
-    const test = await db.UserDietaryRestriction.findAll({ raw: true, where: { userId } })
-    console.log(test)
-    res.send('Success')
+
+    // Send back their restrictions in the response
+    const userRestrictionInfo = await db.User.findAll({
+      raw: true,
+      where: { id: userId },
+      include: [db.DietaryRestriction]
+     });
+
+    const userRestrictions = getRestrictionObj(userRestrictionInfo);
+    res.send({
+      success: true,
+      userRestrictions
+    });
   })
   return router
 }

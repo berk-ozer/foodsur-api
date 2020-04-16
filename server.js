@@ -32,15 +32,15 @@ const User_favourite = require('./db/models/User_favourite')(db)
 const dietaryRestrictionSeed = require('./db/seeds/seedDietaryRestriction');
 
 // Sync database
-db.sync({ alter: true })
-  .then(res => { console.log('db populated') })
-  // Run seed if table is not already seeded
-  .then(() => Dietary_restriction.count())
-  .then(count => {
-    if (count !== 10) {
-      dietaryRestrictionSeed(db);
-    }
-  });
+// db.sync({ alter: true })
+//   .then(res => { console.log('db populated') })
+//   // Run seed if table is not already seeded
+//   .then(() => Dietary_restriction.count())
+//   .then(count => {
+//     if (count !== 10) {
+//       dietaryRestrictionSeed(db);
+//     }
+//   });
 
 
 // Load the logger first so all (static) HTTP requests are logged to STDOUT

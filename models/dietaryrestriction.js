@@ -6,7 +6,11 @@ module.exports = (sequelize, DataTypes) => {
     tagType: DataTypes.STRING
   }, {});
   DietaryRestriction.associate = function(models) {
-    // associations can be defined here
+    DietaryRestriction.belongsToMany(models.User, {
+      through: 'UserDietaryRestrictions',
+      foreignKey: 'dietaryRestrictionId',
+      otherKey: 'userId'
+    })
   };
   return DietaryRestriction;
 };

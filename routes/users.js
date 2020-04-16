@@ -7,21 +7,20 @@
 
 const express = require('express');
 const router = express.Router();
-const Sequelize = require('sequelize');
-const Op = Sequelize.Op;
-const User = require('../db/models/User')
+const db = require('../models/index');
+const getRestrictionObj = require('../helpers/getRestrictionObj');
 
-module.exports = (db) => {
+module.exports = () => {
 
   router.post("/new", async (req, res) => {
     const {username, email, password} = req.body
-    const checkUser = await User(db).findAll({where: {
+    const checkUser = await User.findAll({where: {
       email
     }})
 
     // If user does not already exist in db, create new user and send their id in response
     if (checkUser.length === 0) {
-      const user = await User(db).create({username, email, password})
+      const user = await User.create({username, email, password})
         .catch(err => console.log(err));
       console.log('USER ADDED')
       res.send({ success: true, userId: user.dataValues.id})
@@ -33,11 +32,20 @@ module.exports = (db) => {
 
   router.post("/login", async (req, res) => {
     const {email} = req.body
-    const user = await User(db).findAll({where: {email}})
+    const userInfo = await db.User.findAll({
+      raw: true,
+      where: {email},
+      include: [db.DietaryRestriction]
+     });
 
-    // If user exists in db, send back their id in response
-    if (user.length === 1) {
-      res.send({ success: true, userId: user[0].dataValues.id});
+    // If user exists in db, send back their id and dietary restrictions in response
+    if (userInfo.length) {
+      const userRestrictions = getRestrictionObj(userInfo);
+      res.send({
+        success: true,
+        userId: userInfo[0].id,
+        userRestrictions
+      });
     } else {
       res.send('Error')
     }

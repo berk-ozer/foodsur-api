@@ -15,11 +15,11 @@ const axios = require('axios')
 app.use(cors());
 
 // PG database client/connection setup
-const db = require("./lib/db");
+// const db = require("./lib/db");
 
-db.authenticate()
-  .then(() => console.log("Database Connected..."))
-  .catch((err) => console.log("Error: ", err));
+// db.authenticate()
+//   .then(() => console.log("Database Connected..."))
+//   .catch((err) => console.log("Error: ", err));
 
 // // Sequelize Models
 // const User = require('./db/models/User')(db)

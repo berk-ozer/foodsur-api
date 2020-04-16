@@ -9,10 +9,10 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       userId: {
-        type: Sequelize.UUID
+        type: Sequelize.INTEGER
       },
       dietaryRestrictionId: {
-        type: Sequelize.UUID
+        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,

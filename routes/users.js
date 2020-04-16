@@ -8,6 +8,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../models/index');
+const getRestrictionObj = require('../helpers/getRestrictionObj');
 
 module.exports = () => {
 
@@ -37,11 +38,14 @@ module.exports = () => {
       include: [db.DietaryRestriction]
      });
 
-     console.log(userInfo);
-
     // If user exists in db, send back their id and dietary restrictions in response
     if (userInfo.length) {
-      // res.send({ success: true, userId: user[0].id});
+      const userRestrictions = getRestrictionObj(userInfo);
+      res.send({
+        success: true,
+        userId: userInfo[0].id,
+        userRestrictions
+      });
     } else {
       res.send('Error')
     }

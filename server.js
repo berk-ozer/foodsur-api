@@ -21,15 +21,15 @@ db.authenticate()
   .then(() => console.log("Database Connected..."))
   .catch((err) => console.log("Error: ", err));
 
-// Sequelize Models
-const User = require('./db/models/User')(db)
-const Dietary_restriction = require('./db/models/Dietary_restriction')(db)
-const User_dietary_restriction = require('./db/models/User_dietary_restriction')(db)
-const Favourite = require('./db/models/Favourite')(db)
-const User_favourite = require('./db/models/User_favourite')(db)
+// // Sequelize Models
+// const User = require('./db/models/User')(db)
+// const Dietary_restriction = require('./db/models/Dietary_restriction')(db)
+// const User_dietary_restriction = require('./db/models/User_dietary_restriction')(db)
+// const Favourite = require('./db/models/Favourite')(db)
+// const User_favourite = require('./db/models/User_favourite')(db)
 
-// Seeds
-const dietaryRestrictionSeed = require('./db/seeds/seedDietaryRestriction');
+// // Seeds
+// const dietaryRestrictionSeed = require('./db/seeds/seedDietaryRestriction');
 
 // Sync database
 // db.sync({ alter: true })

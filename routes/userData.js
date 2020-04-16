@@ -39,20 +39,16 @@ module.exports = () => {
         favouriteId: getFavouriteId[0].id
       })
     }
-
-    const test = await db.UserFavourite.findAll({ raw: true, where: { userId: userId.id } })
-    console.log(test)
   })
 
-  // router.get('/user-favourites', async (req, res) => {
-  //   const userFavourites = User_favourite(db).findAll({
-  //     raw: true, where: {
-  //       userId: userId.id
-  //     }
-  //   })
-  //   console.log(userFavourites)
+  router.get('/user-favourites', async (req, res) => {
+    const userFavourites = await db.User.findAll({
+      raw: true, include: [{ model: db.Favourite }]
+    })
 
-  // });
+    console.log(userFavourites)
+
+  });
 
   router.post('/user-preferences', async (req, res) => {
     let { userId, selectedPreferences } = req.body

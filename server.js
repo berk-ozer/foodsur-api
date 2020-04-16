@@ -58,9 +58,9 @@ const dietaryRestrictionsRoutes = require("./routes/dietaryRestrictions");
 const userDataRoutes = require("./routes/userData");
 
 // Mount all resource routes
-app.use("/api/users", usersRoutes(db));
-app.use("/api/restrictions", dietaryRestrictionsRoutes(db));
-app.use("/api/user-data", userDataRoutes(db));
+app.use("/api/users", usersRoutes());
+app.use("/api/restrictions", dietaryRestrictionsRoutes());
+app.use("/api/user-data", userDataRoutes());
 
 
 // Home page

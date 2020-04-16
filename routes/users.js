@@ -14,13 +14,13 @@ module.exports = () => {
 
   router.post("/new", async (req, res) => {
     const {username, email, password} = req.body
-    const checkUser = await User.findAll({where: {
+    const checkUser = await db.User.findAll({where: {
       email
     }})
 
     // If user does not already exist in db, create new user and send their id in response
     if (checkUser.length === 0) {
-      const user = await User.create({username, email, password})
+      const user = await db.User.create({username, email, password})
         .catch(err => console.log(err));
       console.log('USER ADDED')
       res.send({ success: true, userId: user.dataValues.id})

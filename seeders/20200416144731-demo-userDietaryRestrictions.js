@@ -10,25 +10,37 @@ module.exports = {
     },
     {
       userId: 1,
+      dietaryRestrictionId: 4,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      userId: 1,
       dietaryRestrictionId: 5,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
       userId: 2,
+      dietaryRestrictionId: 3,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      userId: 2,
+      dietaryRestrictionId: 10,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      userId: 3,
       dietaryRestrictionId: 6,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
       userId: 3,
-      dietaryRestrictionId: 7,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      userId: 3,
-      dietaryRestrictionId: 9,
+      dietaryRestrictionId: 8,
       createdAt: new Date(),
       updatedAt: new Date()
     },]);

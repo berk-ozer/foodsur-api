@@ -1,68 +1,74 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../db/models/User');
-const User_dietary_restrictions = require('../db/models/User_dietary_restriction')
-const Favourite = require('../db/models/Favourite')
-const User_favourite = require('../db/models/User_favourite')
+const db = require('../models/index');
 
 // Replace with actual id from cookie
 const userId = {
   id: 2,
 }
 
-module.exports = (db) => {
+module.exports = () => {
 
   router.post('/add-favourites', async (req, res) => {
-    let {productName, api_id} = req.body
-    const checkFavourites = await Favourite(db).findAll({
+    let { productName, api_id } = req.body
+    const checkFavourites = await db.Favourite.findAll({
       raw: true,
-      where: { name: productName}
+      where: { name: productName }
     })
 
-    if(checkFavourites.length === 0){
-      await Favourite(db).create({
-        api_id: api_id,
+    if (checkFavourites.length === 0) {
+      await db.Favourite.create({
+        apiId: api_id,
         name: productName
       })
     }
 
-    const checkUserFavourites = await User_favourite(db).findAll({
+    const getFavouriteId = await db.Favourite.findAll({ raw: true, where: { apiId: api_id } })
+
+    const checkUserFavourites = await db.UserFavourite.findAll({
       raw: true,
       where: {
-        user_id: userId.id,
-        api_id: api_id
+        userId: userId.id,
+        favouriteId: getFavouriteId[0].id
       }
     })
-    if(checkUserFavourites.length === 0) {
-      await User_favourite(db).create({
-        user_id: userId.id,
-        api_id: api_id
+
+    if (checkUserFavourites.length === 0) {
+      await db.UserFavourite.create({
+        userId: userId.id,
+        favouriteId: getFavouriteId[0].id
       })
     }
-    const test = await User_favourite(db).findAll({
-      raw: true
-    })
-    console.log('FAVOURITES_user', test)
-
   })
+
+  router.get('/user-favourites', async (req, res) => {
+    const userFavourites = await db.User.findAll({
+      raw: true, include: [{ model: db.Favourite }]
+    })
+
+    console.log(userFavourites)
+
+  });
 
   router.post('/user-preferences', async (req, res) => {
     let { userId, selectedPreferences } = req.body
 
-    const checkUserPreferences = await User_dietary_restrictions(db).findAll({ attribute: ['restriction_id'], raw: true, where: { user_id: userId } })
+    const checkUserPreferences = await db.UserDietaryRestriction.findAll({ raw: true, where: { userId: userId } })
     const userPreferences = []
-    checkUserPreferences.forEach(preference => userPreferences.push(preference.restriction_id))
+    checkUserPreferences.forEach(preference => userPreferences.push(preference.dietaryRestrictionId))
 
     selectedPreferences = selectedPreferences.filter(preference => !userPreferences.includes(preference))
 
     const userData = []
     selectedPreferences.forEach(preference => {
       userData.push({
-        user_id: userId,
-        restriction_id: preference
+        userId: userId,
+        dietaryRestrictionId: preference
       })
     });
-    await User_dietary_restrictions(db).bulkCreate(userData)
+    await db.UserDietaryRestriction.bulkCreate(userData)
+    const test = await db.UserDietaryRestriction.findAll({ raw: true, where: { userId } })
+    console.log(test)
     res.send('Success')
   })
   return router

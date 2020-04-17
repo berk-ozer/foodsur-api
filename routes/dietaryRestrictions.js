@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const Dietary_restriction = require('../db/models/Dietary_restriction')
+const db = require('../models/index');
 
-module.exports = (db) => {
+module.exports = () => {
 
   router.get("/", async (req, res) => {
-    const restrictions = await Dietary_restriction(db).findAll();
+    const restrictions = await db.DietaryRestriction.findAll();
     res.send(restrictions);
   })
 

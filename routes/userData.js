@@ -25,13 +25,42 @@ module.exports = () => {
       })
 
       const getFavouriteId = await db.Favourite.findAll({ raw: true, where: { name: productName } })
-      const favouriteRestrictions = [];
-      productTags.foreach(product => {
-        favouriteRestrictions.push({
-          favouriteId: getFavouriteId[0].id
-        })
 
+      const getRestrictionTags = await db.DietaryRestriction.findAll({ raw: true, attributes: ['id', 'name'] })
+
+      const formatProductTags = productTags.map(product => {
+        return product.split('_').join('-').toLowerCase()
       })
+
+      const formatRestrictionTags = getRestrictionTags.map(tag => {
+        const itemName = tag.name.toLowerCase().split(' ')
+        if (itemName[1] === 'diet') {
+          itemName.pop()
+        }
+        itemName.join('')
+        return { name: itemName[0], id: tag.id }
+      })
+
+      const restrictionIds = []
+
+      formatRestrictionTags.forEach(tag => {
+        if (formatProductTags.includes(tag.name)) {
+          restrictionIds.push(tag.id)
+        }
+      })
+
+      const favouriteRestrictions = [];
+      restrictionIds.forEach(item => {
+        favouriteRestrictions.push({
+          favouriteId: getFavouriteId[0].id,
+          dietaryRestrictionId: item
+        })
+      })
+
+      await db.FavouriteDietaryRestriction.bulkCreate(favouriteRestrictions)
+      const test = await db.FavouriteDietaryRestriction.findAll({ raw: true })
+      console.log(test)
+
     }
 
     const getFavouriteId = await db.Favourite.findAll({ raw: true, where: { apiId: api_id } })

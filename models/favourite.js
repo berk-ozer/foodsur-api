@@ -9,6 +9,11 @@ module.exports = (sequelize, DataTypes) => {
       through: 'UserFavourites',
       foreignKey: 'favouriteId',
       otherKey: 'userId'
+    }),
+    Favourite.belongsToMany(models.DietaryRestriction, {
+      through: 'FavouriteDietaryRestrictions',
+      foreignKey: 'favouriteId',
+      otherKey: 'dietaryRestrictionId'
     })
   };
   return Favourite;

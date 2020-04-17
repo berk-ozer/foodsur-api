@@ -11,7 +11,9 @@ const userId = {
 module.exports = () => {
 
   router.post('/add-favourites', async (req, res) => {
-    let { productName, api_id } = req.body
+    let { productName, api_id, productTags } = req.body
+
+
     const checkFavourites = await db.Favourite.findAll({
       raw: true,
       where: { name: productName }
@@ -22,6 +24,44 @@ module.exports = () => {
         apiId: api_id,
         name: productName
       })
+
+      const getFavouriteId = await db.Favourite.findAll({ raw: true, where: { name: productName } })
+
+      const getRestrictionTags = await db.DietaryRestriction.findAll({ raw: true, attributes: ['id', 'name'] })
+
+      const formatProductTags = productTags.map(product => {
+        return product.split('_').join('-').toLowerCase()
+      })
+
+      const formatRestrictionTags = getRestrictionTags.map(tag => {
+        const itemName = tag.name.toLowerCase().split(' ')
+        if (itemName[1] === 'diet') {
+          itemName.pop()
+        }
+        itemName.join('')
+        return { name: itemName[0], id: tag.id }
+      })
+
+      const restrictionIds = []
+
+      formatRestrictionTags.forEach(tag => {
+        if (formatProductTags.includes(tag.name)) {
+          restrictionIds.push(tag.id)
+        }
+      })
+
+      const favouriteRestrictions = [];
+      restrictionIds.forEach(item => {
+        favouriteRestrictions.push({
+          favouriteId: getFavouriteId[0].id,
+          dietaryRestrictionId: item
+        })
+      })
+
+      await db.FavouriteDietaryRestriction.bulkCreate(favouriteRestrictions)
+      const test = await db.FavouriteDietaryRestriction.findAll({ raw: true })
+      console.log(test)
+
     }
 
     const getFavouriteId = await db.Favourite.findAll({ raw: true, where: { apiId: api_id } })
@@ -60,6 +100,7 @@ module.exports = () => {
   
 
   router.get('/popular-products', (req, res) => {
+
     //UserFavourites => each row is an instance of a user favouriting somehting {userid, favouritesid}
     //Link to favourites table through UserFavourites
 

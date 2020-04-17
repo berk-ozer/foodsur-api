@@ -58,6 +58,7 @@ module.exports = () => {
   });
 
   router.get('/popular-products', (req, res) => {
+
     //UserFavourites => each row is an instance of a user favouriting somehting {userid, favouritesid}
     //Link to favourites table through UserFavourites
 

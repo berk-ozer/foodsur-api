@@ -42,13 +42,32 @@ module.exports = () => {
   })
 
   router.get('/user-favourites', async (req, res) => {
-    const userFavourites = await db.User.findAll({
-      raw: true, include: [{ model: db.Favourite }]
+    let userFavourites = await db.User.findAll({
+      raw: true, include: [{ model: db.Favourite }], where: { id: userId.id }
     })
 
-    console.log(userFavourites)
+    const userData = []
+    userFavourites.forEach(product => {
+      userData.push({
+        productName: product['Favourites.name'],
+        apiId: product['Favourites.apiId']
+      })
+    })
 
+    res.send(userData)
   });
+
+  router.get('/popular-products', (req, res) => {
+    //UserFavourites => each row is an instance of a user favouriting somehting {userid, favouritesid}
+    //Link to favourites table through UserFavourites
+
+    //1)Total the number of times a favourite id appears in the table, 5 to 10 =>  order by count
+    //2)Using favourite Id Look up the api_to to make a call and grab diet tags, make an array of tag recieved
+    //3)Then use user Id to check that users restricitons, returns an array. (Store on cookie?)
+    //4)Filter these arrays against each other => Only return items that match restrictions and api. (Check by length first so we dont filter)
+    //5)
+
+  })
 
   router.post('/user-preferences', async (req, res) => {
     let { userId, selectedPreferences } = req.body

@@ -3,15 +3,11 @@ const router = express.Router();
 const db = require('../models/index');
 const getRestrictionObj = require('../helpers/getRestrictionObj');
 
-// Replace with actual id from cookie
-const userId = {
-  id: 3,
-}
 
 module.exports = () => {
 
   router.post('/add-favourites', async (req, res) => {
-    let { productName, api_id, productTags } = req.body
+    let { productName, api_id, productTags, userId } = req.body
 
 
     const checkFavourites = await db.Favourite.findAll({
@@ -69,7 +65,7 @@ module.exports = () => {
     const checkUserFavourites = await db.UserFavourite.findAll({
       raw: true,
       where: {
-        userId: userId.id,
+        userId,
         favouriteId: favouriteId[0].id
       }
     })
@@ -77,7 +73,7 @@ module.exports = () => {
 
     if (checkUserFavourites.length === 0) {
       await db.UserFavourite.create({
-        userId: userId.id,
+        userId,
         favouriteId: favouriteId[0].id
       })
       console.log('success')
@@ -86,7 +82,7 @@ module.exports = () => {
 
   router.get('/user-favourites', async (req, res) => {
     let userFavourites = await db.User.findAll({
-      raw: true, include: [{ model: db.Favourite }], where: { id: userId.id }
+      raw: true, include: [{ model: db.Favourite }], where: { id: userId }
     })
 
     const userData = []
@@ -101,26 +97,41 @@ module.exports = () => {
 
 
   router.get('/popular-products', async (req, res) => {
-    const favouriteData = await db.UserFavourite.findAll({ raw: true })
 
-    const countFavs = await db.UserFavourite.count({ raw: true, attributes: ['favouriteId'], group: ['UserFavourite.favouriteId'] })
-    console.log(countFavs)
+    const countFavs = await db.UserFavourite.count({ raw: true, attributes: ['favouriteId'], order: ['id', 'ASC'], group: ['UserFavourite.favouriteId'] })
 
 
-
+    const orderedFavs =countFavs.sort((a,b) => Number(b.count) - Number(a.count))
 
 
 
-    // Model.count({
-    //   where: { id: a model id },
-    //   include: [Like]
-    // });
+  let favsArray = []
 
-    // return Model.findAll({
-    //   attributes: ['id', [sequelize.fn('count', sequelize.col('likes.id')), 'likecount']],
-    //   include: [{ attributes: [], model: Like }],
-    //   group: ['model.id']
-    // });
+  for(fav of orderedFavs){
+    favsArray.push(Number(fav.favouriteId))
+  }
+
+  const getFavouriteRestrictions = await db.FavouriteDietaryRestriction.findAll({ raw: true, attributes: ["favouriteId", "dietaryRestrictionId"] })
+
+    const favRestrictions = []
+  for(fav of favsArray){
+
+    const dietaryRestrictions= []
+
+    for(id of getFavouriteRestrictions) {
+      if(fav === id.favouriteId) {
+        dietaryRestrictions.push(id.dietaryRestrictionId)
+      }
+    }
+    let currentObject = {
+      favouriteId: fav,
+      dietaryRestrictions
+    }
+
+    favRestrictions.push(currentObject)
+  }
+  console.log("favRestrictions", favRestrictions)
+
   })
 
   // Setting user dietary preferences

@@ -69,6 +69,7 @@ module.exports = () => {
         favouriteId: favouriteId[0].id
       }
     })
+
     console.log(checkUserFavourites)
 
     if (checkUserFavourites.length === 0) {
@@ -96,57 +97,69 @@ module.exports = () => {
   });
 
 
-  router.post('/popular-products', async (req, res) => {
-    const userId = req.body.id
+  router.get('/popular-products', async (req, res) => {
 
-    const countFavs = await db.UserFavourite.count({ raw: true, attributes: ['favouriteId'], order: ['id', 'ASC'], group: ['UserFavourite.favouriteId'] })
+    const userId = req.query.id
 
+    const countFavs = await db.UserFavourite.count({ raw: true, attributes: ['favouriteId'], group: ['UserFavourite.favouriteId'] })
 
-    const orderedFavs =countFavs.sort((a,b) => Number(b.count) - Number(a.count))
+    const orderedFavs = countFavs.sort((a, b) => Number(b.count) - Number(a.count))
 
+    //Limit number of products?
 
+    let favsArray = []
 
-  let favsArray = []
+    for (fav of orderedFavs) {
+      favsArray.push(Number(fav.favouriteId))
+    }
 
-  for(fav of orderedFavs){
-    favsArray.push(Number(fav.favouriteId))
-  }
-
-  const getFavouriteRestrictions = await db.FavouriteDietaryRestriction.findAll({ raw: true, attributes: ["favouriteId", "dietaryRestrictionId"] })
+    const getFavouriteRestrictions = await db.FavouriteDietaryRestriction.findAll({ raw: true, attributes: ["favouriteId", "dietaryRestrictionId"] })
 
     const favRestrictions = []
-  for(fav of favsArray){
+    for (fav of favsArray) {
 
-    const dietaryRestrictions= []
+      const dietaryRestrictions = []
 
-    for(id of getFavouriteRestrictions) {
-      if(fav === id.favouriteId) {
-        dietaryRestrictions.push(id.dietaryRestrictionId)
+      for (id of getFavouriteRestrictions) {
+        if (fav === id.favouriteId) {
+          dietaryRestrictions.push(id.dietaryRestrictionId)
+        }
+      }
+
+      let currentObject = {
+        favouriteId: fav,
+        dietaryRestrictions
+      }
+
+      favRestrictions.push(currentObject)
+    }
+
+    const getUserRestrictions = await db.UserDietaryRestriction.findAll({ raw: true, where: { userId }, attributes: ["userId", "dietaryRestrictionId"] })
+
+    const userRestrictions = []
+
+    getUserRestrictions.forEach(restriction => userRestrictions.push(restriction.dietaryRestrictionId))
+
+    const matchedPopularIds = []
+
+    for (fav of favRestrictions) {
+      const count = fav.dietaryRestrictions.filter(restriction => userRestrictions.includes(restriction))
+      if (count.length === userRestrictions.length) {
+        matchedPopularIds.push(fav.favouriteId)
       }
     }
-    let currentObject = {
-      favouriteId: fav,
-      dietaryRestrictions
-    }
 
-    favRestrictions.push(currentObject)
-  }
+    const getPopularProducts = await db.Favourite.findAll({ raw: true, attributes: ['apiId', 'name', 'id'] })
 
-  console.log("favRestrictions", favRestrictions)
+    const sendPopularProducts = [];
 
-  const getUserRestrictions= await db.UserDietaryRestriction.findAll({ raw: true, where: { userId }, attributes: ["userId", "dietaryRestrictionId"] })
+    getPopularProducts.forEach(product => {
+      if (matchedPopularIds.includes(product.id)) {
+        sendPopularProducts.push(product)
+      }
+    })
 
-  const userRestrictions =  []
-
-  getUserRestrictions.forEach(restriction => userRestrictions.push(restriction.dietaryRestrictionId))
-  const matchedPopularIds =  []
-  for(fav of favRestrictions) {
-    const count = fav.dietaryRestrictions.filter(restriction => userRestrictions.includes(restriction))
-    if(count.length === userRestrictions.length){
-      matchedPopularIds.push(fav.favouriteId)
-    }
-  }
-  console.log('matchedPopularIds', matchedPopularIds);
+    res.send(sendPopularProducts)
   })
 
   // Setting user dietary preferences

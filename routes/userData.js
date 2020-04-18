@@ -82,6 +82,9 @@ module.exports = () => {
   })
 
   router.get('/user-favourites', async (req, res) => {
+
+    const userId = req.query.id
+
     let userFavourites = await db.User.findAll({
       raw: true, include: [{ model: db.Favourite }], where: { id: userId }
     })

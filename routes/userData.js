@@ -96,7 +96,8 @@ module.exports = () => {
   });
 
 
-  router.get('/popular-products', async (req, res) => {
+  router.post('/popular-products', async (req, res) => {
+    const userId = req.body.id
 
     const countFavs = await db.UserFavourite.count({ raw: true, attributes: ['favouriteId'], order: ['id', 'ASC'], group: ['UserFavourite.favouriteId'] })
 
@@ -130,8 +131,22 @@ module.exports = () => {
 
     favRestrictions.push(currentObject)
   }
+
   console.log("favRestrictions", favRestrictions)
 
+  const getUserRestrictions= await db.UserDietaryRestriction.findAll({ raw: true, where: { userId }, attributes: ["userId", "dietaryRestrictionId"] })
+
+  const userRestrictions =  []
+
+  getUserRestrictions.forEach(restriction => userRestrictions.push(restriction.dietaryRestrictionId))
+  const matchedPopularIds =  []
+  for(fav of favRestrictions) {
+    const count = fav.dietaryRestrictions.filter(restriction => userRestrictions.includes(restriction))
+    if(count.length === userRestrictions.length){
+      matchedPopularIds.push(fav.favouriteId)
+    }
+  }
+  console.log('matchedPopularIds', matchedPopularIds);
   })
 
   // Setting user dietary preferences

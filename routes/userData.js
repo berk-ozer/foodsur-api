@@ -108,6 +108,12 @@ module.exports = () => {
 
     const orderedFavs = countFavs.sort((a, b) => Number(b.count) - Number(a.count))
 
+    const countArray = orderedFavs.map((fav) => {
+      return fav.count
+    })
+
+
+
     //Limit number of products?
 
     let favsArray = []
@@ -162,7 +168,10 @@ module.exports = () => {
       }
     })
 
-    res.send(sendPopularProducts)
+    const sendPopProdsAndCountArray = [countArray, sendPopularProducts]
+    console.log('sendPopProdsAndCountArray', sendPopProdsAndCountArray);
+
+    res.send(sendPopProdsAndCountArray)
   })
 
   // Setting user dietary preferences

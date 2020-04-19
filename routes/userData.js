@@ -199,5 +199,25 @@ module.exports = () => {
       userRestrictions
     });
   })
+
+  router.delete('/remove-favourites', async (req, res) => {
+    const { userId, apiId } = req.query
+
+    let favouriteId = await db.Favourite.findAll({
+      raw: true, where: {
+        apiId
+      }, attributes: ['id']
+    })
+    favouriteId = favouriteId[0].id
+
+    let test = await db.UserFavourite.findAll({ raw: true, where: { favouriteId: favouriteId, userId: userId }, attributes: ['userId', 'favouriteId'] })
+    console.log(test)
+    await db.UserFavourite.destroy({ where: { favouriteId: favouriteId, userId: userId } })
+    test = await db.UserFavourite.findAll({ raw: true, where: { favouriteId: favouriteId, userId: userId }, attributes: ['userId', 'favouriteId'] })
+    console.log(test)
+
+    res.send('ok')
+  })
+
   return router
 }

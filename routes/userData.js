@@ -7,7 +7,8 @@ const getRestrictionObj = require('../helpers/getRestrictionObj');
 module.exports = () => {
 
   router.post('/add-favourites', async (req, res) => {
-    let { productName, api_id, productTags, userId } = req.body
+    let { productName, api_id, productTags, userId, macros } = req.body
+    console.log(req.body)
 
 
     const checkFavourites = await db.Favourite.findAll({
@@ -22,6 +23,7 @@ module.exports = () => {
       })
 
       const getFavouriteId = await db.Favourite.findAll({ raw: true, where: { name: productName } })
+      console.log(getFavouriteId)
 
       const getRestrictionTags = await db.DietaryRestriction.findAll({ raw: true, attributes: ['id', 'name'] })
 

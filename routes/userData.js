@@ -75,8 +75,6 @@ module.exports = () => {
       }
     })
 
-    console.log(checkUserFavourites)
-
     if (checkUserFavourites.length === 0) {
       await db.UserFavourite.create({
         userId,
@@ -94,11 +92,19 @@ module.exports = () => {
       raw: true, include: [{ model: db.Favourite }], where: { id: userId }
     })
 
+    console.log(userFavourites)
+
     const userData = []
     userFavourites.forEach(product => {
       userData.push({
         productName: product['Favourites.name'],
-        apiId: product['Favourites.apiId']
+        apiId: product['Favourites.apiId'],
+        macros: {
+          calories: product['Favourites.calories'],
+          carbs: product['Favourites.carbs'],
+          protein: product['Favourites.protein'],
+          fat: product['Favourites.fat']
+        }
       })
     })
     res.send(userData)
@@ -225,7 +231,7 @@ module.exports = () => {
     favouriteId = favouriteId[0].id
 
     await db.UserFavourite.destroy({ where: { favouriteId: favouriteId, userId: userId } })
-
+    console.log(favouriteId)
 
     res.send('ok')
   })

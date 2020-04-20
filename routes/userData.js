@@ -231,7 +231,7 @@ module.exports = () => {
     favouriteId = favouriteId[0].id
 
     await db.UserFavourite.destroy({ where: { favouriteId: favouriteId, userId: userId } })
-
+    console.log(favouriteId)
 
     res.send('ok')
   })

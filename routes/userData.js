@@ -219,11 +219,8 @@ module.exports = () => {
     })
     favouriteId = favouriteId[0].id
 
-    let test = await db.UserFavourite.findAll({ raw: true, where: { favouriteId: favouriteId, userId: userId }, attributes: ['userId', 'favouriteId'] })
-    console.log(test)
     await db.UserFavourite.destroy({ where: { favouriteId: favouriteId, userId: userId } })
-    test = await db.UserFavourite.findAll({ raw: true, where: { favouriteId: favouriteId, userId: userId }, attributes: ['userId', 'favouriteId'] })
-    console.log(test)
+
 
     res.send('ok')
   })

@@ -8,7 +8,6 @@ module.exports = () => {
 
   router.post('/add-favourites', async (req, res) => {
     let { productName, api_id, productTags, userId, macros } = req.body
-    console.log(req.body)
 
 
     const checkFavourites = await db.Favourite.findAll({
@@ -19,7 +18,11 @@ module.exports = () => {
     if (checkFavourites.length === 0) {
       await db.Favourite.create({
         apiId: api_id,
-        name: productName
+        name: productName,
+        calories: macros.calories,
+        carbs: macros.carbs,
+        protein: macros.protein,
+        fat: macros.fat
       })
 
       const getFavouriteId = await db.Favourite.findAll({ raw: true, where: { name: productName } })

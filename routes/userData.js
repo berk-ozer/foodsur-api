@@ -96,16 +96,18 @@ module.exports = () => {
 
     const userData = []
     userFavourites.forEach(product => {
-      userData.push({
-        productName: product['Favourites.name'],
-        apiId: product['Favourites.apiId'],
-        macros: {
-          calories: product['Favourites.calories'],
-          carbs: product['Favourites.carbs'],
-          protein: product['Favourites.protein'],
-          fat: product['Favourites.fat']
-        }
-      })
+      if (product['Favourites.name']) {
+        userData.push({
+          productName: product['Favourites.name'],
+          apiId: product['Favourites.apiId'],
+          macros: {
+            calories: product['Favourites.calories'],
+            carbs: product['Favourites.carbs'],
+            protein: product['Favourites.protein'],
+            fat: product['Favourites.fat']
+          }
+        })
+      }
     })
     res.send(userData)
   });
@@ -231,8 +233,10 @@ module.exports = () => {
     favouriteId = favouriteId[0].id
 
     await db.UserFavourite.destroy({ where: { favouriteId: favouriteId, userId: userId } })
+    const test = await db.UserFavourite.findAll({ raw: true })
+    console.log(test)
     console.log(favouriteId)
-
+    console.log(userId)
     res.send('ok')
   })
 

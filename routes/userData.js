@@ -125,10 +125,6 @@ module.exports = () => {
       return fav.count
     })
 
-
-
-    //Limit number of products?
-
     let favsArray = []
 
     for (fav of orderedFavs) {
@@ -181,8 +177,8 @@ module.exports = () => {
       }
     })
 
-    const sendPopProdsAndCountArray = [countArray, sendPopularProducts]
-    console.log('sendPopProdsAndCountArray', sendPopProdsAndCountArray);
+    const userFavourites = await db.UserFavourite.findAll({ raw: true, where: { userId }, attributes: ['favouriteId'] })
+    const sendPopProdsAndCountArray = [countArray, sendPopularProducts, userFavourites]
 
     res.send(sendPopProdsAndCountArray)
   })

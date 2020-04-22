@@ -239,7 +239,12 @@ module.exports = () => {
     const userId = req.query.user
 
     const favouriteId = await db.Favourite.findAll({ raw: true, where: { apiId }, attributes: ['id'] })
-    const userIdMatch = await db.UserFavourite.findAll({ raw: true, where: { userId, favouriteId: favouriteId[0].id } })
+
+    let userIdMatch = [];
+
+    if (favouriteId.length !== 0) {
+      userIdMatch = await db.UserFavourite.findAll({ raw: true, where: { userId, favouriteId: favouriteId[0].id } })
+    }
 
     if (userIdMatch.length === 0) {
       res.send(false)

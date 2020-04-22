@@ -230,10 +230,22 @@ module.exports = () => {
 
     await db.UserFavourite.destroy({ where: { favouriteId: favouriteId, userId: userId } })
     const test = await db.UserFavourite.findAll({ raw: true })
-    console.log(test)
-    console.log(favouriteId)
-    console.log(userId)
+
     res.send('ok')
+  })
+
+  router.get('/check-favourites', async (req, res) => {
+    const apiId = req.query.id
+    const userId = req.query.user
+
+    const favouriteId = await db.Favourite.findAll({ raw: true, where: { apiId }, attributes: ['id'] })
+    const userIdMatch = await db.UserFavourite.findAll({ raw: true, where: { userId, favouriteId: favouriteId[0].id } })
+
+    if (userIdMatch.length === 0) {
+      res.send(false)
+    } else {
+      res.send(true)
+    }
   })
 
   return router
